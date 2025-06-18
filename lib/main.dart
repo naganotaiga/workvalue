@@ -11,20 +11,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// =============================================================================
 /// WorkValue - iOS専用労働価値可視化アプリ (パート1/3)
-/// 
+///
 /// 【パート1】アプリ基盤・データモデル・ストレージサービス
 /// - iOS専用初期化・設定
 /// - アプリ基盤とテーマシステム
 /// - 社会人向けデータモデル定義
 /// - ローカルストレージ管理
-/// 
+///
 /// 【対象ユーザー】15-30歳社会人専用
 /// 【目的】労働時間を金額で可視化し、モチベーション向上
 /// 【核心価値】
 /// - 労働の価値可視化（時間→金額変換）
 /// - サービス残業問題の明確化（損失額表示）
 /// - 資格投資ROI計算（会社規定/転職想定）
-/// 
+///
 /// 【iOS専用最適化項目】
 /// - iOS専用システムUI設定とハプティクフィードバック
 /// - iOS Human Interface Guidelines準拠デザイン
@@ -50,14 +50,14 @@ Future<void> _initializeWorkValueApp() async {
   try {
     // iOS専用システムUI設定
     await _configureIOSSystemUI();
-    
+
     // 社会人向けサービス初期化（並列実行でパフォーマンス向上）
     await Future.wait([
       SharedPreferences.getInstance(),
       NotificationService.initialize(),
       StorageService.initialize(),
     ]);
-    
+
     debugPrint('✅ WorkValue iOS専用アプリ初期化完了');
   } catch (e) {
     debugPrint('❌ WorkValue初期化エラー: $e');
@@ -111,29 +111,28 @@ class WorkValueApp extends StatelessWidget {
           return MaterialApp(
             title: 'WorkValue',
             debugShowCheckedModeBanner: false,
-            
+
             // iOS専用テーマ設定
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: settingsProvider.isDarkMode 
-                ? ThemeMode.dark 
-                : ThemeMode.light,
-            
+            themeMode:
+                settingsProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
             // 日本語ローカライゼーション
             locale: const Locale('ja', 'JP'),
             supportedLocales: const [Locale('ja', 'JP')],
-            
+
             // メイン画面（パート2で実装）
             home: const MainScreen(),
-            
+
             // iOS専用テキストスケーリング制限
             builder: (context, child) {
               return MediaQuery(
                 data: MediaQuery.of(context).copyWith(
                   textScaler: MediaQuery.of(context).textScaler.clamp(
-                    minScaleFactor: 0.85,
-                    maxScaleFactor: 1.3,
-                  ),
+                        minScaleFactor: 0.85,
+                        maxScaleFactor: 1.3,
+                      ),
                 ),
                 child: child ?? const SizedBox.shrink(),
               );
@@ -155,13 +154,13 @@ class WorkValueApp extends StatelessWidget {
 /// 社会人向けプロフェッショナルなデザイン
 class AppTheme {
   // 社会人向けプロフェッショナルカラーパレット
-  static const Color _primaryBlue = Color(0xFF1976D2);        // ビジネス青系プライマリ
-  static const Color _accentGreen = Color(0xFF388E3C);        // 収入表示用緑系
-  static const Color _warningOrange = Color(0xFFF57C00);      // サービス残業警告色
-  static const Color _errorRed = Color(0xFFD32F2F);          // エラー・損失表示色
-  static const Color _surfaceLight = Color(0xFFFAFAFA);      // iOS明るい背景
-  static const Color _surfaceDark = Color(0xFF121212);       // iOS暗い背景
-  static const Color _iOSGray = Color(0xFFF2F2F7);           // iOS標準グレー
+  static const Color _primaryBlue = Color(0xFF1976D2); // ビジネス青系プライマリ
+  static const Color _accentGreen = Color(0xFF388E3C); // 収入表示用緑系
+  static const Color _warningOrange = Color(0xFFF57C00); // サービス残業警告色
+  static const Color _errorRed = Color(0xFFD32F2F); // エラー・損失表示色
+  static const Color _surfaceLight = Color(0xFFFAFAFA); // iOS明るい背景
+  static const Color _surfaceDark = Color(0xFF121212); // iOS暗い背景
+  static const Color _iOSGray = Color(0xFFF2F2F7); // iOS標準グレー
 
   /// ライトテーマ（社会人向けプロフェッショナル）
   static ThemeData get lightTheme {
@@ -180,10 +179,10 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
-      
+
       // NotoSansJP + iOS標準フォント融合
       fontFamily: 'NotoSansJP',
-      
+
       // iOS専用AppBar設定
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
@@ -200,7 +199,7 @@ class AppTheme {
           statusBarIconBrightness: Brightness.dark,
         ),
       ),
-      
+
       // iOS専用ボタンスタイル（ビジネス向け）
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -220,7 +219,7 @@ class AppTheme {
           ),
         ),
       ),
-      
+
       // iOS専用カードデザイン
       cardTheme: CardTheme(
         color: colorScheme.surface,
@@ -230,7 +229,7 @@ class AppTheme {
           borderRadius: BorderRadius.circular(16), // iOS角丸
         ),
       ),
-      
+
       // iOS専用入力フィールド
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -247,11 +246,12 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         labelStyle: const TextStyle(fontFamily: 'NotoSansJP'),
         hintStyle: const TextStyle(fontFamily: 'NotoSansJP'),
       ),
-      
+
       // iOS専用ナビゲーションバー
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colorScheme.surface.withOpacity(0.95),
@@ -285,7 +285,6 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'NotoSansJP',
-      
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
@@ -301,12 +300,12 @@ class AppTheme {
           statusBarIconBrightness: Brightness.light,
         ),
       ),
-      
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           minimumSize: const Size(0, 48),
           elevation: 4,
@@ -318,14 +317,12 @@ class AppTheme {
           ),
         ),
       ),
-      
       cardTheme: CardTheme(
         color: colorScheme.surface,
         elevation: 4,
         shadowColor: Colors.black.withOpacity(0.4),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: colorScheme.surfaceVariant.withOpacity(0.3),
@@ -341,11 +338,11 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         labelStyle: const TextStyle(fontFamily: 'NotoSansJP'),
         hintStyle: const TextStyle(fontFamily: 'NotoSansJP'),
       ),
-      
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colorScheme.surface.withOpacity(0.95),
         elevation: 8,
@@ -366,21 +363,21 @@ class AppConstants {
   // アプリ基本情報
   static const String appName = 'WorkValue';
   static const String appVersion = '1.0.0';
-  
+
   // デフォルト値（日本の平均的な社会人の値を参考）
-  static const double defaultMonthlySalary = 300000.0;       // 月給30万円
-  static const int defaultWorkingHoursPerDay = 8;           // 1日8時間
-  static const int defaultWorkingDaysPerMonth = 22;         // 月22日勤務
-  static const int defaultWorkStartHour = 9;                // 始業時刻9時
-  static const int defaultWorkEndHour = 18;                 // 定時18時
-  static const double defaultOvertimeRate = 1.25;           // 残業代倍率1.25倍
-  
+  static const double defaultMonthlySalary = 300000.0; // 月給30万円
+  static const int defaultWorkingHoursPerDay = 8; // 1日8時間
+  static const int defaultWorkingDaysPerMonth = 22; // 月22日勤務
+  static const int defaultWorkStartHour = 9; // 始業時刻9時
+  static const int defaultWorkEndHour = 18; // 定時18時
+  static const double defaultOvertimeRate = 1.25; // 残業代倍率1.25倍
+
   // 表示・計算設定
   static const String currencySymbol = '¥';
   static const Duration timerUpdateInterval = Duration(seconds: 1);
   static const Duration notificationCooldown = Duration(minutes: 30);
   static const Duration workBreakReminderInterval = Duration(hours: 1);
-  
+
   // iOS専用ハプティクフィードバック設定
   static const Duration hapticFeedbackDelay = Duration(milliseconds: 50);
 
@@ -408,17 +405,15 @@ class AppConstants {
   }
 
   /// 定時判定（サービス残業チェック用）
-  static bool isOvertime(DateTime startTime, DateTime endTime, int workingHours) {
+  static bool isOvertime(
+      DateTime startTime, DateTime endTime, int workingHours) {
     final workDuration = endTime.difference(startTime);
     return workDuration.inHours > workingHours;
   }
 
   /// サービス残業損失計算
   static double calculateOvertimeLoss(
-    int overtimeMinutes, 
-    double hourlyWage, 
-    double overtimeRate
-  ) {
+      int overtimeMinutes, double hourlyWage, double overtimeRate) {
     final overtimeHours = overtimeMinutes / 60.0;
     final expectedOvertimePay = overtimeHours * hourlyWage * overtimeRate;
     return expectedOvertimePay; // 本来もらえるはずだった残業代
@@ -461,7 +456,7 @@ class AppConstants {
   static String formatWorkDuration(Duration duration) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
-    
+
     if (hours == 0) {
       return '${minutes}分';
     } else if (minutes == 0) {
@@ -474,10 +469,10 @@ class AppConstants {
 
 /// iOS専用ハプティクフィードバックタイプ
 enum HapticFeedbackType {
-  light,      // 軽いタップ（ボタン押下）
-  medium,     // 中程度のタップ（勤務開始・終了）
-  heavy,      // 強いタップ（重要な確認）
-  selection,  // 選択フィードバック（設定変更）
+  light, // 軽いタップ（ボタン押下）
+  medium, // 中程度のタップ（勤務開始・終了）
+  heavy, // 強いタップ（重要な確認）
+  selection, // 選択フィードバック（設定変更）
 }
 
 // =============================================================================
@@ -538,11 +533,15 @@ class UserSettings {
         notificationsEnabled: json['notificationsEnabled'] ?? true,
         monthlySalary: AppConstants.safeToDouble(
             json['monthlySalary'], AppConstants.defaultMonthlySalary),
-        workingHoursPerDay: json['workingHoursPerDay'] ?? AppConstants.defaultWorkingHoursPerDay,
-        workingDaysPerMonth: json['workingDaysPerMonth'] ?? AppConstants.defaultWorkingDaysPerMonth,
-        workStartHour: json['workStartHour'] ?? AppConstants.defaultWorkStartHour,
+        workingHoursPerDay: json['workingHoursPerDay'] ??
+            AppConstants.defaultWorkingHoursPerDay,
+        workingDaysPerMonth: json['workingDaysPerMonth'] ??
+            AppConstants.defaultWorkingDaysPerMonth,
+        workStartHour:
+            json['workStartHour'] ?? AppConstants.defaultWorkStartHour,
         workEndHour: json['workEndHour'] ?? AppConstants.defaultWorkEndHour,
-        overtimeRate: AppConstants.safeToDouble(json['overtimeRate'], AppConstants.defaultOvertimeRate),
+        overtimeRate: AppConstants.safeToDouble(
+            json['overtimeRate'], AppConstants.defaultOvertimeRate),
         firstLaunchDate: json['firstLaunchDate'] != null
             ? DateTime.parse(json['firstLaunchDate'])
             : DateTime.now(),
@@ -649,7 +648,8 @@ class WorkSession {
   bool get hasOvertime => overtimeSeconds > 0;
 
   /// フォーマット済み時間表示
-  String get formattedDuration => AppConstants.formatDuration(durationInSeconds);
+  String get formattedDuration =>
+      AppConstants.formatDuration(durationInSeconds);
 
   /// JSON変換（iOS永続化対応）
   Map<String, dynamic> toJson() => {
@@ -667,10 +667,13 @@ class WorkSession {
   factory WorkSession.fromJson(Map<String, dynamic> json) => WorkSession(
         id: json['id'],
         startTime: DateTime.parse(json['startTime']),
-        endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
+        endTime:
+            json['endTime'] != null ? DateTime.parse(json['endTime']) : null,
         hourlyWage: AppConstants.safeToDouble(json['hourlyWage'], 0.0),
-        overtimeRate: AppConstants.safeToDouble(json['overtimeRate'], AppConstants.defaultOvertimeRate),
-        scheduledWorkingHours: json['scheduledWorkingHours'] ?? AppConstants.defaultWorkingHoursPerDay,
+        overtimeRate: AppConstants.safeToDouble(
+            json['overtimeRate'], AppConstants.defaultOvertimeRate),
+        scheduledWorkingHours: json['scheduledWorkingHours'] ??
+            AppConstants.defaultWorkingHoursPerDay,
         isServiceOvertime: json['isServiceOvertime'] ?? false,
         note: json['note'],
       );
@@ -697,13 +700,13 @@ class WorkSession {
 /// ROI計算（会社規定/転職想定）・iOS専用永続化対応
 class CertificationPlan {
   final String id;
-  final String name;                    // 資格名
-  final CertificationType type;         // 会社規定 or 転職想定
-  final double increaseAmount;          // 月額増加（会社規定）or 年額増加（転職想定）
-  final int studyHours;                 // 予想学習時間
-  final DateTime? targetDate;           // 取得目標日
-  final DateTime createdDate;           // 計画作成日
-  final bool isCompleted;               // 取得完了フラグ
+  final String name; // 資格名
+  final CertificationType type; // 会社規定 or 転職想定
+  final double increaseAmount; // 月額増加（会社規定）or 年額増加（転職想定）
+  final int studyHours; // 予想学習時間
+  final DateTime? targetDate; // 取得目標日
+  final DateTime createdDate; // 計画作成日
+  final bool isCompleted; // 取得完了フラグ
   final String? note;
 
   CertificationPlan({
@@ -763,7 +766,8 @@ class CertificationPlan {
       };
 
   /// JSON復元（iOS永続化対応）
-  factory CertificationPlan.fromJson(Map<String, dynamic> json) => CertificationPlan(
+  factory CertificationPlan.fromJson(Map<String, dynamic> json) =>
+      CertificationPlan(
         id: json['id'],
         name: json['name'] ?? '',
         type: CertificationType.values.firstWhere(
@@ -772,9 +776,11 @@ class CertificationPlan {
         ),
         increaseAmount: AppConstants.safeToDouble(json['increaseAmount'], 0.0),
         studyHours: json['studyHours'] ?? 0,
-        targetDate: json['targetDate'] != null ? DateTime.parse(json['targetDate']) : null,
-        createdDate: json['createdDate'] != null 
-            ? DateTime.parse(json['createdDate']) 
+        targetDate: json['targetDate'] != null
+            ? DateTime.parse(json['targetDate'])
+            : null,
+        createdDate: json['createdDate'] != null
+            ? DateTime.parse(json['createdDate'])
             : DateTime.now(),
         isCompleted: json['isCompleted'] ?? false,
         note: json['note'],
@@ -817,10 +823,10 @@ enum CertificationType {
   );
 
   const CertificationType(this.displayName, this.description, this.icon);
-  
-  final String displayName;    // 表示名
-  final String description;    // 説明文
-  final IconData icon;         // アイコン
+
+  final String displayName; // 表示名
+  final String description; // 説明文
+  final IconData icon; // アイコン
 }
 
 /// 資格投資効率レベル
@@ -850,12 +856,13 @@ enum CertificationROILevel {
     '⚠️',
   );
 
-  const CertificationROILevel(this.displayName, this.description, this.color, this.emoji);
-  
-  final String displayName;    // 表示名
-  final String description;    // 説明文
-  final Color color;           // 色
-  final String emoji;          // 絵文字（iOS専用）
+  const CertificationROILevel(
+      this.displayName, this.description, this.color, this.emoji);
+
+  final String displayName; // 表示名
+  final String description; // 説明文
+  final Color color; // 色
+  final String emoji; // 絵文字（iOS専用）
 }
 
 // =============================================================================
@@ -872,7 +879,7 @@ class StorageService {
   static const String _keyWorkSessions = 'work_sessions_v1';
   static const String _keyCertificationPlans = 'certification_plans_v1';
   static const String _keyAppVersion = 'app_version';
-  
+
   static SharedPreferences? _prefs;
 
   /// iOS専用初期化
@@ -891,7 +898,8 @@ class StorageService {
   static Future<void> _performMigrationIfNeeded() async {
     final currentVersion = _preferences.getString(_keyAppVersion);
     if (currentVersion != AppConstants.appVersion) {
-      debugPrint('WorkValueバージョン更新: $currentVersion → ${AppConstants.appVersion}');
+      debugPrint(
+          'WorkValueバージョン更新: $currentVersion → ${AppConstants.appVersion}');
       await _preferences.setString(_keyAppVersion, AppConstants.appVersion);
     }
   }
@@ -908,7 +916,8 @@ class StorageService {
   static Future<bool> saveUserSettings(UserSettings settings) async {
     try {
       final jsonString = jsonEncode(settings.toJson());
-      final success = await _preferences.setString(_keyUserSettings, jsonString);
+      final success =
+          await _preferences.setString(_keyUserSettings, jsonString);
       if (success) {
         debugPrint('✅ ユーザー設定保存完了');
       }
@@ -943,7 +952,8 @@ class StorageService {
     try {
       final jsonList = sessions.map((s) => s.toJson()).toList();
       final jsonString = jsonEncode(jsonList);
-      final success = await _preferences.setString(_keyWorkSessions, jsonString);
+      final success =
+          await _preferences.setString(_keyWorkSessions, jsonString);
       if (success) {
         debugPrint('✅ 作業セッション保存完了: ${sessions.length}件');
       }
@@ -961,7 +971,8 @@ class StorageService {
       if (jsonString == null) return [];
 
       final jsonList = jsonDecode(jsonString) as List;
-      final sessions = jsonList.map((json) => WorkSession.fromJson(json)).toList();
+      final sessions =
+          jsonList.map((json) => WorkSession.fromJson(json)).toList();
       debugPrint('✅ 作業セッション読み込み完了: ${sessions.length}件');
       return sessions;
     } catch (e) {
@@ -971,11 +982,13 @@ class StorageService {
   }
 
   /// 資格計画保存（バッチ処理）
-  static Future<bool> saveCertificationPlans(List<CertificationPlan> plans) async {
+  static Future<bool> saveCertificationPlans(
+      List<CertificationPlan> plans) async {
     try {
       final jsonList = plans.map((p) => p.toJson()).toList();
       final jsonString = jsonEncode(jsonList);
-      final success = await _preferences.setString(_keyCertificationPlans, jsonString);
+      final success =
+          await _preferences.setString(_keyCertificationPlans, jsonString);
       if (success) {
         debugPrint('✅ 資格計画保存完了: ${plans.length}件');
       }
@@ -993,7 +1006,8 @@ class StorageService {
       if (jsonString == null) return [];
 
       final jsonList = jsonDecode(jsonString) as List;
-      final plans = jsonList.map((json) => CertificationPlan.fromJson(json)).toList();
+      final plans =
+          jsonList.map((json) => CertificationPlan.fromJson(json)).toList();
       debugPrint('✅ 資格計画読み込み完了: ${plans.length}件');
       return plans;
     } catch (e) {
@@ -1086,8 +1100,9 @@ class NotificationService {
   /// 通知レート制限チェック
   static bool _canSendNotification() {
     if (_lastNotificationTime == null) return true;
-    
-    final timeSinceLastNotification = DateTime.now().difference(_lastNotificationTime!);
+
+    final timeSinceLastNotification =
+        DateTime.now().difference(_lastNotificationTime!);
     return timeSinceLastNotification >= AppConstants.notificationCooldown;
   }
 
@@ -1123,7 +1138,8 @@ class NotificationService {
   }
 
   /// 昼休み成果通知（プロジェクト指針の要件）
-  static Future<void> showLunchEarningsNotification(double morningEarnings) async {
+  static Future<void> showLunchEarningsNotification(
+      double morningEarnings) async {
     if (!_initialized) return;
 
     try {
@@ -1153,7 +1169,8 @@ class NotificationService {
   }
 
   /// 勤務終了成果通知（プロジェクト指針の要件）
-  static Future<void> showDailyWorkCompletionNotification(double totalEarnings) async {
+  static Future<void> showDailyWorkCompletionNotification(
+      double totalEarnings) async {
     if (!_initialized) return;
 
     try {
@@ -1245,7 +1262,7 @@ class _MainScreenState extends State<MainScreen> {
 class SettingsProvider extends ChangeNotifier {
   UserSettings _settings = UserSettings();
   bool get isDarkMode => _settings.isDarkMode;
-  
+
   // パート2で完全実装
 }
 
@@ -1266,38 +1283,38 @@ class WorkerProvider extends ChangeNotifier {
 /// ✅ iOS UserDefaults最適化ストレージサービス
 /// ✅ iOS UserNotifications最適化通知サービス（昼休み・勤務終了・残業警告）
 /// ✅ サービス残業判定・ROI計算・ハプティクフィードバック
-/// 
+///
 /// 【学生機能完全除外】
 /// ❌ StudySession、StudentProvider、StudyIntensity
 /// ❌ 学習時間・学習価値・目標大学設定
-/// 
+///
 /// 【パート2で実装予定】
 /// - 状態管理プロバイダー（Settings、Worker）
 /// - メイン画面（大型時計UI・勤務状態表示）
 /// - リアルタイム収入計算エンジン
 /// - サービス残業判定ダイアログ
-/// 
+///
 /// 【パート3で実装予定】
 /// - 個別機能画面（WorkerScreen、SettingsScreen、CertificationScreen）
 /// - 資格ROI計算画面
 /// - 履歴・統計画面
 /// - iOS専用最適化機能/// =============================================================================
 /// WorkValue - iOS専用労働価値可視化アプリ (パート2/3)
-/// 
+///
 /// 【パート2】状態管理・メイン画面・リアルタイム計算エンジン
 /// - 設定管理プロバイダー（給与・勤務時間設定）
 /// - 社会人向け機能プロバイダー（勤務記録・収入計算・資格管理）
 /// - メイン画面（大型デジタル時計・今日の累積収入・操作ボタン）
 /// - リアルタイム計算エンジン
 /// - サービス残業判定システム
-/// 
+///
 /// 【対象ユーザー】15-30歳社会人専用
 /// 【核心価値実装】
 /// - 労働の価値可視化（時間→金額変換）
 /// - サービス残業問題の明確化（損失額表示）
 /// - シンプルな操作性（ワンタップ記録）
 /// - リアルタイム表示（働いている間の累積収入）
-/// 
+///
 /// ※このパートをパート1に追加して使用してください
 /// =============================================================================
 
@@ -1377,12 +1394,13 @@ class SettingsProvider extends ChangeNotifier {
       _setError('月給は0円より大きい値を入力してください');
       return false;
     }
-    
+
     try {
       _settings = _settings.copyWith(monthlySalary: salary);
       notifyListeners();
       await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.medium);
-      debugPrint('💰 月給更新: ${AppConstants.formatCurrency(salary)} (時給: ${AppConstants.formatCurrency(hourlyWage)})');
+      debugPrint(
+          '💰 月給更新: ${AppConstants.formatCurrency(salary)} (時給: ${AppConstants.formatCurrency(hourlyWage)})');
       return await _saveSettings();
     } catch (e) {
       _setError('月給設定失敗: $e');
@@ -1419,7 +1437,7 @@ class SettingsProvider extends ChangeNotifier {
       _setError('残業倍率は1.0以上を入力してください');
       return false;
     }
-    
+
     try {
       _settings = _settings.copyWith(overtimeRate: rate);
       notifyListeners();
@@ -1474,26 +1492,27 @@ class WorkerProvider extends ChangeNotifier {
   Timer? _timer;
   bool _isWorking = false;
   int _currentSessionSeconds = 0;
-  
+
   // 今日の統計
   double _todayRegularEarnings = 0.0;
   double _todayOvertimeEarnings = 0.0;
   double _todayServiceLoss = 0.0;
   int _todayWorkingSeconds = 0;
-  
+
   // 時給設定（SettingsProviderから同期）
-  double _hourlyWage = AppConstants.defaultMonthlySalary / 
-      (AppConstants.defaultWorkingHoursPerDay * AppConstants.defaultWorkingDaysPerMonth);
+  double _hourlyWage = AppConstants.defaultMonthlySalary /
+      (AppConstants.defaultWorkingHoursPerDay *
+          AppConstants.defaultWorkingDaysPerMonth);
   double _overtimeRate = AppConstants.defaultOvertimeRate;
   int _scheduledWorkingHours = AppConstants.defaultWorkingHoursPerDay;
-  
+
   // 資格計画
   List<CertificationPlan> _certificationPlans = [];
-  
+
   // 通知管理
   DateTime? _lastBreakNotification;
   DateTime? _lunchNotificationSent;
-  
+
   // エラー管理
   String? _error;
 
@@ -1501,39 +1520,48 @@ class WorkerProvider extends ChangeNotifier {
   bool get isWorking => _isWorking;
   WorkSession? get currentSession => _currentSession;
   int get currentSessionSeconds => _currentSessionSeconds;
-  String get formattedCurrentTime => AppConstants.formatDuration(_currentSessionSeconds);
+  String get formattedCurrentTime =>
+      AppConstants.formatDuration(_currentSessionSeconds);
   String? get error => _error;
 
   // ゲッター - 収入計算
   double get currentRegularEarnings {
     if (!_isWorking) return 0.0;
-    final regularSeconds = math.min(_currentSessionSeconds, _scheduledWorkingHours * 3600);
+    final regularSeconds =
+        math.min(_currentSessionSeconds, _scheduledWorkingHours * 3600);
     return (regularSeconds / 3600.0) * _hourlyWage;
   }
 
   double get currentOvertimeEarnings {
     if (!_isWorking) return 0.0;
-    final overtimeSeconds = math.max(0, _currentSessionSeconds - (_scheduledWorkingHours * 3600));
+    final overtimeSeconds =
+        math.max(0, _currentSessionSeconds - (_scheduledWorkingHours * 3600));
     return (overtimeSeconds / 3600.0) * _hourlyWage * _overtimeRate;
   }
 
-  double get currentTotalEarnings => currentRegularEarnings + currentOvertimeEarnings;
+  double get currentTotalEarnings =>
+      currentRegularEarnings + currentOvertimeEarnings;
 
-  bool get isCurrentlyOvertime => _currentSessionSeconds > (_scheduledWorkingHours * 3600);
+  bool get isCurrentlyOvertime =>
+      _currentSessionSeconds > (_scheduledWorkingHours * 3600);
 
   int get currentOvertimeMinutes {
     if (!isCurrentlyOvertime) return 0;
-    return ((_currentSessionSeconds - (_scheduledWorkingHours * 3600)) / 60).floor();
+    return ((_currentSessionSeconds - (_scheduledWorkingHours * 3600)) / 60)
+        .floor();
   }
 
   // ゲッター - 今日の統計
-  double get todayTotalEarnings => _todayRegularEarnings + _todayOvertimeEarnings + currentTotalEarnings;
+  double get todayTotalEarnings =>
+      _todayRegularEarnings + _todayOvertimeEarnings + currentTotalEarnings;
   double get todayTotalLoss => _todayServiceLoss;
-  String get todayWorkingTime => AppConstants.formatDuration(_todayWorkingSeconds + _currentSessionSeconds);
+  String get todayWorkingTime => AppConstants.formatDuration(
+      _todayWorkingSeconds + _currentSessionSeconds);
 
   // ゲッター - 資格計画
-  List<CertificationPlan> get certificationPlans => List.unmodifiable(_certificationPlans);
-  List<CertificationPlan> get activeCertificationPlans => 
+  List<CertificationPlan> get certificationPlans =>
+      List.unmodifiable(_certificationPlans);
+  List<CertificationPlan> get activeCertificationPlans =>
       _certificationPlans.where((plan) => !plan.isCompleted).toList();
 
   WorkerProvider() {
@@ -1547,10 +1575,10 @@ class WorkerProvider extends ChangeNotifier {
         StorageService.loadWorkSessions(),
         StorageService.loadCertificationPlans(),
       ]);
-      
+
       _sessionHistory = futures[0] as List<WorkSession>;
       _certificationPlans = futures[1] as List<CertificationPlan>;
-      
+
       _calculateTodayStats();
       notifyListeners();
       debugPrint('✅ WorkerProvider データ読み込み完了');
@@ -1570,12 +1598,17 @@ class WorkerProvider extends ChangeNotifier {
           !session.isActive; // 完了済みセッションのみ
     }).toList();
 
-    _todayRegularEarnings = todaySessions.fold(0.0, (sum, session) => sum + session.regularEarnings);
-    _todayOvertimeEarnings = todaySessions.fold(0.0, (sum, session) => sum + session.overtimeEarnings);
-    _todayServiceLoss = todaySessions.fold(0.0, (sum, session) => sum + session.serviceLoss);
-    _todayWorkingSeconds = todaySessions.fold(0, (sum, session) => sum + session.durationInSeconds);
-    
-    debugPrint('📊 今日の統計: 定時${AppConstants.formatCurrency(_todayRegularEarnings)} + 残業${AppConstants.formatCurrency(_todayOvertimeEarnings)} - 損失${AppConstants.formatCurrency(_todayServiceLoss)}');
+    _todayRegularEarnings = todaySessions.fold(
+        0.0, (sum, session) => sum + session.regularEarnings);
+    _todayOvertimeEarnings = todaySessions.fold(
+        0.0, (sum, session) => sum + session.overtimeEarnings);
+    _todayServiceLoss =
+        todaySessions.fold(0.0, (sum, session) => sum + session.serviceLoss);
+    _todayWorkingSeconds = todaySessions.fold(
+        0, (sum, session) => sum + session.durationInSeconds);
+
+    debugPrint(
+        '📊 今日の統計: 定時${AppConstants.formatCurrency(_todayRegularEarnings)} + 残業${AppConstants.formatCurrency(_todayOvertimeEarnings)} - 損失${AppConstants.formatCurrency(_todayServiceLoss)}');
   }
 
   /// 設定同期（SettingsProviderから呼び出し）
@@ -1611,10 +1644,10 @@ class WorkerProvider extends ChangeNotifier {
       _isWorking = true;
       _currentSessionSeconds = 0;
       _lunchNotificationSent = null; // 昼休み通知リセット
-      
+
       _startTimer();
       await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.medium);
-      
+
       notifyListeners();
       debugPrint('🚀 勤務開始: ${_currentSession!.startTime}');
       return true;
@@ -1633,10 +1666,11 @@ class WorkerProvider extends ChangeNotifier {
 
     try {
       _stopTimer();
-      
+
       final endTime = DateTime.now();
-      final isOvertime = _currentSessionSeconds > (_scheduledWorkingHours * 3600);
-      
+      final isOvertime =
+          _currentSessionSeconds > (_scheduledWorkingHours * 3600);
+
       // サービス残業判定は呼び出し元で行う（MainScreenのダイアログ）
       final completedSession = _currentSession!.copyWithEnd(
         endTime: endTime,
@@ -1651,7 +1685,8 @@ class WorkerProvider extends ChangeNotifier {
       _calculateTodayStats();
 
       // 勤務終了通知
-      await NotificationService.showDailyWorkCompletionNotification(todayTotalEarnings);
+      await NotificationService.showDailyWorkCompletionNotification(
+          todayTotalEarnings);
 
       // 状態リセット
       _isWorking = false;
@@ -1660,8 +1695,9 @@ class WorkerProvider extends ChangeNotifier {
 
       await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.heavy);
       notifyListeners();
-      
-      debugPrint('🏁 勤務終了: $endTime (総収入: ${AppConstants.formatCurrency(completedSession.totalEarnings)})');
+
+      debugPrint(
+          '🏁 勤務終了: $endTime (総収入: ${AppConstants.formatCurrency(completedSession.totalEarnings)})');
       return true;
     } catch (e) {
       _setError('勤務終了失敗: $e');
@@ -1675,7 +1711,7 @@ class WorkerProvider extends ChangeNotifier {
 
     try {
       _stopTimer();
-      
+
       final endTime = DateTime.now();
       final completedSession = _currentSession!.copyWithEnd(
         endTime: endTime,
@@ -1691,7 +1727,8 @@ class WorkerProvider extends ChangeNotifier {
       _calculateTodayStats();
 
       // サービス残業警告通知
-      await NotificationService.showOvertimeWarningNotification(completedSession.serviceLoss);
+      await NotificationService.showOvertimeWarningNotification(
+          completedSession.serviceLoss);
 
       // 状態リセット
       _isWorking = false;
@@ -1700,8 +1737,9 @@ class WorkerProvider extends ChangeNotifier {
 
       await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.heavy);
       notifyListeners();
-      
-      debugPrint('⚠️ サービス残業記録: 損失${AppConstants.formatCurrency(completedSession.serviceLoss)}');
+
+      debugPrint(
+          '⚠️ サービス残業記録: 損失${AppConstants.formatCurrency(completedSession.serviceLoss)}');
       return true;
     } catch (e) {
       _setError('サービス残業記録失敗: $e');
@@ -1730,13 +1768,13 @@ class WorkerProvider extends ChangeNotifier {
   /// 通知チェック（1秒ごと）
   void _checkNotifications() {
     final now = DateTime.now();
-    
+
     // 1時間ごとの休憩リマインダー
     if (_currentSessionSeconds > 0 && _currentSessionSeconds % 3600 == 0) {
-      final timeSinceLastBreak = _lastBreakNotification == null 
-          ? Duration(hours: 999) 
+      final timeSinceLastBreak = _lastBreakNotification == null
+          ? Duration(hours: 999)
           : now.difference(_lastBreakNotification!);
-      
+
       if (timeSinceLastBreak >= AppConstants.workBreakReminderInterval) {
         NotificationService.showWorkBreakReminder(currentTotalEarnings);
         _lastBreakNotification = now;
@@ -1744,9 +1782,11 @@ class WorkerProvider extends ChangeNotifier {
     }
 
     // 昼休み通知（12:00-13:00の間で1回のみ）
-    if (_lunchNotificationSent == null && 
-        now.hour >= 12 && now.hour < 13 && 
-        _currentSessionSeconds >= 3 * 3600) { // 3時間以上勤務後
+    if (_lunchNotificationSent == null &&
+        now.hour >= 12 &&
+        now.hour < 13 &&
+        _currentSessionSeconds >= 3 * 3600) {
+      // 3時間以上勤務後
       NotificationService.showLunchEarningsNotification(currentTotalEarnings);
       _lunchNotificationSent = now;
     }
@@ -1773,7 +1813,8 @@ class WorkerProvider extends ChangeNotifier {
       final planIndex = _certificationPlans.indexWhere((p) => p.id == planId);
       if (planIndex == -1) return false;
 
-      _certificationPlans[planIndex] = _certificationPlans[planIndex].copyWith(isCompleted: true);
+      _certificationPlans[planIndex] =
+          _certificationPlans[planIndex].copyWith(isCompleted: true);
       await StorageService.saveCertificationPlans(_certificationPlans);
       notifyListeners();
       await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.medium);
@@ -1829,7 +1870,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _selectedIndex);
-    
+
     // パルスアニメーション（勤務中の表示）
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 1500),
@@ -1852,7 +1893,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   /// プロバイダー同期
   void _syncProviders() {
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
     final workerProvider = Provider.of<WorkerProvider>(context, listen: false);
 
     workerProvider.updateWageSettings(
@@ -1918,11 +1960,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   opacity: _fadeController,
                   child: PageView(
                     controller: _pageController,
-                    onPageChanged: (index) => setState(() => _selectedIndex = index),
+                    onPageChanged: (index) =>
+                        setState(() => _selectedIndex = index),
                     children: [
                       WorkTimerScreen(pulseController: _pulseController),
                       const CertificationScreen(), // パート3で実装
-                      const SettingsScreen(),      // パート3で実装
+                      const SettingsScreen(), // パート3で実装
                     ],
                   ),
                 ),
@@ -1932,7 +1975,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(theme),
-      floatingActionButton: _hasActiveTimer() ? _buildQuickStopButton(theme) : null,
+      floatingActionButton:
+          _hasActiveTimer() ? _buildQuickStopButton(theme) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
@@ -1987,7 +2031,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.pause_circle_outline, size: 16, color: theme.colorScheme.onSurfaceVariant),
+                Icon(Icons.pause_circle_outline,
+                    size: 16, color: theme.colorScheme.onSurfaceVariant),
                 const SizedBox(width: 4),
                 Text(
                   '待機中',
@@ -2007,7 +2052,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             return Transform.scale(
               scale: 1.0 + (sin(_pulseController.value * 2 * pi) * 0.05),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -2016,7 +2062,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.work, size: 16, color: theme.colorScheme.primary),
+                    Icon(Icons.work,
+                        size: 16, color: theme.colorScheme.primary),
                     const SizedBox(width: 4),
                     Text(
                       '勤務中',
@@ -2095,7 +2142,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future<void> _showStopWorkDialog(WorkerProvider workerProvider) async {
     // サービス残業チェック
     final isOvertime = workerProvider.isCurrentlyOvertime;
-    
+
     if (isOvertime) {
       // サービス残業判定ダイアログ
       _showOvertimeDialog(workerProvider);
@@ -2146,11 +2193,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   /// サービス残業判定ダイアログ（プロジェクト指針の要件）
   Future<void> _showOvertimeDialog(WorkerProvider workerProvider) async {
     final overtimeMinutes = workerProvider.currentOvertimeMinutes;
-    final potentialLoss = AppConstants.calculateOvertimeLoss(
-      overtimeMinutes, 
-      workerProvider._hourlyWage, 
-      workerProvider._overtimeRate
-    );
+    final potentialLoss = AppConstants.calculateOvertimeLoss(overtimeMinutes,
+        workerProvider._hourlyWage, workerProvider._overtimeRate);
 
     final result = await showDialog<String>(
       context: context,
@@ -2372,7 +2416,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   }
 
   /// メイン時計セクション（プロジェクト指針の重要要件）
-  Widget _buildMainClockSection(ThemeData theme, WorkerProvider workerProvider) {
+  Widget _buildMainClockSection(
+      ThemeData theme, WorkerProvider workerProvider) {
     return Column(
       children: [
         // 大型デジタル時計（プロジェクト指針準拠）
@@ -2442,9 +2487,11 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
                 ),
                 const SizedBox(height: 8),
                 // 残業状況表示
-                if (workerProvider.isWorking && workerProvider.isCurrentlyOvertime)
+                if (workerProvider.isWorking &&
+                    workerProvider.isCurrentlyOvertime)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.orange.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -2558,7 +2605,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   }
 
   /// メインアクションボタン（プロジェクト指針準拠）
-  Widget _buildMainActionButton(ThemeData theme, WorkerProvider workerProvider) {
+  Widget _buildMainActionButton(
+      ThemeData theme, WorkerProvider workerProvider) {
     if (!workerProvider.isWorking) {
       // 勤務開始ボタン（大型ボタン）
       return SizedBox(
@@ -2574,7 +2622,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
             foregroundColor: theme.colorScheme.onPrimary,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           ),
         ),
       );
@@ -2593,7 +2642,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.error,
             foregroundColor: theme.colorScheme.onError,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
           ),
         ),
       );
@@ -2601,7 +2651,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   }
 
   /// 今日の統計セクション
-  Widget _buildTodayStatsSection(ThemeData theme, WorkerProvider workerProvider) {
+  Widget _buildTodayStatsSection(
+      ThemeData theme, WorkerProvider workerProvider) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -2630,7 +2681,9 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
                 child: _buildStatItem(
                   theme,
                   '定時収入',
-                  AppConstants.formatCurrency(workerProvider._todayRegularEarnings + workerProvider.currentRegularEarnings),
+                  AppConstants.formatCurrency(
+                      workerProvider._todayRegularEarnings +
+                          workerProvider.currentRegularEarnings),
                   Colors.blue,
                 ),
               ),
@@ -2639,7 +2692,9 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
                 child: _buildStatItem(
                   theme,
                   '残業代',
-                  AppConstants.formatCurrency(workerProvider._todayOvertimeEarnings + workerProvider.currentOvertimeEarnings),
+                  AppConstants.formatCurrency(
+                      workerProvider._todayOvertimeEarnings +
+                          workerProvider.currentOvertimeEarnings),
                   Colors.green,
                 ),
               ),
@@ -2660,7 +2715,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   }
 
   /// 統計アイテム
-  Widget _buildStatItem(ThemeData theme, String label, String value, Color color) {
+  Widget _buildStatItem(
+      ThemeData theme, String label, String value, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -2690,7 +2746,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   }
 
   /// 時給情報セクション
-  Widget _buildWageInfoSection(ThemeData theme, SettingsProvider settingsProvider) {
+  Widget _buildWageInfoSection(
+      ThemeData theme, SettingsProvider settingsProvider) {
     return Row(
       children: [
         Expanded(
@@ -2702,7 +2759,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
             ),
             child: Column(
               children: [
-                Icon(Icons.attach_money, color: theme.colorScheme.secondary, size: 24),
+                Icon(Icons.attach_money,
+                    color: theme.colorScheme.secondary, size: 24),
                 const SizedBox(width: 8),
                 Text('時給', style: theme.textTheme.bodyMedium),
                 Text(
@@ -2730,7 +2788,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
                 const SizedBox(width: 8),
                 Text('残業時給', style: theme.textTheme.bodyMedium),
                 Text(
-                  AppConstants.formatHourlyWage(settingsProvider.overtimeHourlyWage),
+                  AppConstants.formatHourlyWage(
+                      settingsProvider.overtimeHourlyWage),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.orange[600],
@@ -2748,7 +2807,7 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   Future<void> _startWork(WorkerProvider workerProvider) async {
     await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.medium);
     final success = await workerProvider.startWork();
-    
+
     if (!success && mounted) {
       _showErrorSnackBar(workerProvider.error ?? '勤務開始に失敗しました');
     }
@@ -2758,7 +2817,8 @@ class _WorkTimerScreenState extends State<WorkTimerScreen>
   Future<void> _stopWork(WorkerProvider workerProvider) async {
     // MainScreenのstopWorkDialogを呼び出し
     if (mounted) {
-      final mainScreenState = context.findAncestorStateOfType<_MainScreenState>();
+      final mainScreenState =
+          context.findAncestorStateOfType<_MainScreenState>();
       mainScreenState?._showStopWorkDialog(workerProvider);
     }
   }
@@ -2831,7 +2891,7 @@ class SettingsScreen extends StatelessWidget {
 /// ✅ 通知連携（昼休み・勤務終了・残業警告）
 /// ✅ iOS専用ハプティクフィードバック統合
 /// ✅ 今日の統計・時給表示・勤務状態インジケーター
-/// 
+///
 /// 【プロジェクト指針要件達成】
 /// ✅ 大型デジタル時計（13:45:23形式）
 /// ✅ 今日の累積収入表示（¥12,450形式）
@@ -2840,27 +2900,27 @@ class SettingsScreen extends StatelessWidget {
 /// ✅ サービス残業判定ポップアップ
 /// ✅ リアルタイム収入計算
 /// ✅ 昼休み・勤務終了通知
-/// 
+///
 /// 【パート3で実装予定】
 /// - 資格投資画面（ROI計算・計画管理）
 /// - 設定画面（給与・勤務時間・アプリ設定）
 /// - 履歴画面（過去の勤務記録・統計）
 /// - 高度なUI/UXコンポーネント/// =============================================================================
 /// WorkValue - iOS専用労働価値可視化アプリ (パート3/3 最終)
-/// 
+///
 /// 【パート3】個別画面・資格ROI計算・設定機能・完成版
 /// - 資格投資画面（ROI計算・投資効率判定）
 /// - 設定画面（給与・勤務時間・アプリ設定）
 /// - 履歴・統計画面
 /// - iOS専用高度なUI/UXコンポーネント
-/// 
+///
 /// 【対象ユーザー】15-30歳社会人専用
 /// 【完成機能】
 /// - 労働価値可視化システム完成
 /// - 資格投資ROI計算システム完成
 /// - サービス残業判定システム完成
 /// - iOS専用最適化完成
-/// 
+///
 /// ※このパートをパート1・パート2に追加して完成版としてください
 /// =============================================================================
 
@@ -2878,7 +2938,7 @@ class CertificationScreen extends StatefulWidget {
   State<CertificationScreen> createState() => _CertificationScreenState();
 }
 
-class _CertificationScreenState extends State<CertificationScreen> 
+class _CertificationScreenState extends State<CertificationScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -2971,9 +3031,10 @@ class _CertificationScreenState extends State<CertificationScreen>
   }
 
   /// ROI概要セクション
-  Widget _buildROIOverviewSection(ThemeData theme, WorkerProvider workerProvider) {
+  Widget _buildROIOverviewSection(
+      ThemeData theme, WorkerProvider workerProvider) {
     final plans = workerProvider.activeCertificationPlans;
-    
+
     if (plans.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(24),
@@ -3002,8 +3063,8 @@ class _CertificationScreenState extends State<CertificationScreen>
     }
 
     // 最も効率の良い資格を表示
-    final bestPlan = plans.reduce((a, b) => 
-        a.studyHourlyRate > b.studyHourlyRate ? a : b);
+    final bestPlan =
+        plans.reduce((a, b) => a.studyHourlyRate > b.studyHourlyRate ? a : b);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -3096,9 +3157,10 @@ class _CertificationScreenState extends State<CertificationScreen>
   }
 
   /// 資格計画リストセクション
-  Widget _buildCertificationPlansSection(ThemeData theme, WorkerProvider workerProvider) {
+  Widget _buildCertificationPlansSection(
+      ThemeData theme, WorkerProvider workerProvider) {
     final plans = workerProvider.certificationPlans;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -3151,7 +3213,8 @@ class _CertificationScreenState extends State<CertificationScreen>
   }
 
   /// 資格計画カード
-  Widget _buildPlanCard(ThemeData theme, WorkerProvider workerProvider, CertificationPlan plan) {
+  Widget _buildPlanCard(
+      ThemeData theme, WorkerProvider workerProvider, CertificationPlan plan) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -3165,7 +3228,7 @@ class _CertificationScreenState extends State<CertificationScreen>
             offset: const Offset(0, 2),
           ),
         ],
-        border: plan.isCompleted 
+        border: plan.isCompleted
             ? Border.all(color: Colors.green.withOpacity(0.3))
             : null,
       ),
@@ -3177,7 +3240,8 @@ class _CertificationScreenState extends State<CertificationScreen>
             children: [
               Icon(
                 plan.type.icon,
-                color: plan.isCompleted ? Colors.green : theme.colorScheme.primary,
+                color:
+                    plan.isCompleted ? Colors.green : theme.colorScheme.primary,
                 size: 20,
               ),
               const SizedBox(width: 8),
@@ -3186,7 +3250,8 @@ class _CertificationScreenState extends State<CertificationScreen>
                   plan.name,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    decoration: plan.isCompleted ? TextDecoration.lineThrough : null,
+                    decoration:
+                        plan.isCompleted ? TextDecoration.lineThrough : null,
                   ),
                 ),
               ),
@@ -3197,7 +3262,7 @@ class _CertificationScreenState extends State<CertificationScreen>
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // タイプとROI情報
           Row(
             children: [
@@ -3226,22 +3291,27 @@ class _CertificationScreenState extends State<CertificationScreen>
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // 詳細情報
-          _buildDetailRow(theme, '収入増加', AppConstants.formatCurrency(plan.increaseAmount), 
+          _buildDetailRow(
+              theme,
+              '収入増加',
+              AppConstants.formatCurrency(plan.increaseAmount),
               plan.type == CertificationType.companyRegulation ? '月額' : '年額'),
           const SizedBox(height: 8),
           _buildDetailRow(theme, '学習時間', '${plan.studyHours}時間', '予想'),
           const SizedBox(height: 8),
-          _buildDetailRow(theme, '総増加額', AppConstants.formatCurrency(plan.totalIncomeIncrease), '生涯'),
-          
+          _buildDetailRow(theme, '総増加額',
+              AppConstants.formatCurrency(plan.totalIncomeIncrease), '生涯'),
+
           if (!plan.isCompleted) ...[
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () => _completeCertification(workerProvider, plan),
+                    onPressed: () =>
+                        _completeCertification(workerProvider, plan),
                     icon: const Icon(Icons.check, size: 18),
                     label: const Text('取得完了'),
                     style: ElevatedButton.styleFrom(
@@ -3267,7 +3337,8 @@ class _CertificationScreenState extends State<CertificationScreen>
   }
 
   /// 詳細情報行
-  Widget _buildDetailRow(ThemeData theme, String label, String value, String unit) {
+  Widget _buildDetailRow(
+      ThemeData theme, String label, String value, String unit) {
     return Row(
       children: [
         Text(
@@ -3302,7 +3373,8 @@ class _CertificationScreenState extends State<CertificationScreen>
         style: ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.onPrimary,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         ),
       ),
     );
@@ -3325,7 +3397,8 @@ class _CertificationScreenState extends State<CertificationScreen>
   }
 
   /// 資格取得完了
-  Future<void> _completeCertification(WorkerProvider workerProvider, CertificationPlan plan) async {
+  Future<void> _completeCertification(
+      WorkerProvider workerProvider, CertificationPlan plan) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -3377,7 +3450,8 @@ class CertificationPlanDialog extends StatefulWidget {
   const CertificationPlanDialog({super.key, this.plan});
 
   @override
-  State<CertificationPlanDialog> createState() => _CertificationPlanDialogState();
+  State<CertificationPlanDialog> createState() =>
+      _CertificationPlanDialogState();
 }
 
 class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
@@ -3385,7 +3459,7 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
   final _nameController = TextEditingController();
   final _increaseAmountController = TextEditingController();
   final _studyHoursController = TextEditingController();
-  
+
   CertificationType _selectedType = CertificationType.companyRegulation;
   DateTime? _targetDate;
 
@@ -3440,7 +3514,7 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 // 計算タイプ選択
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -3469,18 +3543,22 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // 収入増加額
                 TextFormField(
                   controller: _increaseAmountController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: _selectedType == CertificationType.companyRegulation 
-                        ? '月給増加額' : '年収増加額',
+                    labelText:
+                        _selectedType == CertificationType.companyRegulation
+                            ? '月給増加額'
+                            : '年収増加額',
                     hintText: '例: 50000',
                     prefixIcon: const Icon(Icons.attach_money),
-                    suffixText: _selectedType == CertificationType.companyRegulation 
-                        ? '円/月' : '円/年',
+                    suffixText:
+                        _selectedType == CertificationType.companyRegulation
+                            ? '円/月'
+                            : '円/年',
                   ),
                   validator: (value) {
                     if (value?.trim().isEmpty ?? true) {
@@ -3493,7 +3571,7 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 // 学習時間
                 TextFormField(
                   controller: _studyHoursController,
@@ -3515,12 +3593,14 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 // 目標日（オプション）
                 ListTile(
                   leading: const Icon(Icons.calendar_today),
-                  title: Text(_targetDate == null ? '目標日を設定（任意）' : '目標日: ${DateFormat('yyyy/MM/dd').format(_targetDate!)}'),
-                  trailing: _targetDate == null 
+                  title: Text(_targetDate == null
+                      ? '目標日を設定（任意）'
+                      : '目標日: ${DateFormat('yyyy/MM/dd').format(_targetDate!)}'),
+                  trailing: _targetDate == null
                       ? const Icon(Icons.add)
                       : IconButton(
                           icon: const Icon(Icons.clear),
@@ -3555,7 +3635,7 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 3650)), // 10年後まで
     );
-    
+
     if (date != null) {
       setState(() {
         _targetDate = date;
@@ -3581,20 +3661,21 @@ class _CertificationPlanDialogState extends State<CertificationPlanDialog> {
     );
 
     final workerProvider = Provider.of<WorkerProvider>(context, listen: false);
-    
+
     // TODO: 編集機能は将来実装（現在は追加のみ）
     final success = await workerProvider.addCertificationPlan(plan);
-    
+
     if (success && mounted) {
       await AppConstants.provideiOSHapticFeedback(HapticFeedbackType.medium);
       Navigator.pop(context);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('資格計画を${widget.plan != null ? '更新' : '追加'}しました'),
           backgroundColor: Colors.green[600],
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
     }
@@ -3702,7 +3783,8 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   /// 基本設定セクション
-  Widget _buildBasicSettingsSection(ThemeData theme, SettingsProvider settingsProvider) {
+  Widget _buildBasicSettingsSection(
+      ThemeData theme, SettingsProvider settingsProvider) {
     return _buildSettingsSection(
       theme: theme,
       title: '基本設定',
@@ -3728,7 +3810,8 @@ class _SettingsScreenState extends State<SettingsScreen>
           icon: Icons.notifications,
           value: settingsProvider.notificationsEnabled,
           onChanged: (value) async {
-            final success = await settingsProvider.setNotificationsEnabled(value);
+            final success =
+                await settingsProvider.setNotificationsEnabled(value);
             if (!success && mounted) {
               _showErrorSnackBar('通知設定の変更に失敗しました');
             }
@@ -3739,7 +3822,8 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   /// 給与設定セクション
-  Widget _buildSalarySettingsSection(ThemeData theme, SettingsProvider settingsProvider) {
+  Widget _buildSalarySettingsSection(
+      ThemeData theme, SettingsProvider settingsProvider) {
     return _buildSettingsSection(
       theme: theme,
       title: '給与設定',
@@ -3768,7 +3852,8 @@ class _SettingsScreenState extends State<SettingsScreen>
         _buildInfoTile(
           theme: theme,
           title: '残業時給',
-          subtitle: AppConstants.formatHourlyWage(settingsProvider.overtimeHourlyWage),
+          subtitle: AppConstants.formatHourlyWage(
+              settingsProvider.overtimeHourlyWage),
           icon: Icons.schedule,
         ),
       ],
@@ -3776,7 +3861,8 @@ class _SettingsScreenState extends State<SettingsScreen>
   }
 
   /// 勤務時間設定セクション
-  Widget _buildWorkTimeSettingsSection(ThemeData theme, SettingsProvider settingsProvider) {
+  Widget _buildWorkTimeSettingsSection(
+      ThemeData theme, SettingsProvider settingsProvider) {
     return _buildSettingsSection(
       theme: theme,
       title: '勤務時間設定',
@@ -3940,7 +4026,7 @@ class _SettingsScreenState extends State<SettingsScreen>
     Color? textColor,
   }) {
     final color = textColor ?? theme.colorScheme.primary;
-    
+
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -3951,7 +4037,8 @@ class _SettingsScreenState extends State<SettingsScreen>
         child: Icon(icon, color: color, size: 20),
       ),
       title: Text(title, style: TextStyle(color: textColor)),
-      subtitle: Text(subtitle, style: TextStyle(color: textColor?.withOpacity(0.7))),
+      subtitle:
+          Text(subtitle, style: TextStyle(color: textColor?.withOpacity(0.7))),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
@@ -4113,7 +4200,8 @@ class _SettingsScreenState extends State<SettingsScreen>
             onPressed: () async {
               final value = int.tryParse(controller.text);
               if (value != null && value > 0 && value <= 16) {
-                final success = await settingsProvider.setWorkingHours(hoursPerDay: value);
+                final success =
+                    await settingsProvider.setWorkingHours(hoursPerDay: value);
                 if (mounted) {
                   Navigator.pop(context);
                   if (success) {
@@ -4170,7 +4258,8 @@ class _SettingsScreenState extends State<SettingsScreen>
           ),
           ElevatedButton(
             onPressed: () async {
-              final success = await settingsProvider.setWorkingHours(startHour: selectedHour);
+              final success = await settingsProvider.setWorkingHours(
+                  startHour: selectedHour);
               if (mounted) {
                 Navigator.pop(context);
                 if (success) {
@@ -4223,7 +4312,8 @@ class _SettingsScreenState extends State<SettingsScreen>
           ),
           ElevatedButton(
             onPressed: () async {
-              final success = await settingsProvider.setWorkingHours(endHour: selectedHour);
+              final success =
+                  await settingsProvider.setWorkingHours(endHour: selectedHour);
               if (mounted) {
                 Navigator.pop(context);
                 if (success) {
@@ -4452,7 +4542,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
   /// フィルター適用
   void _applyFilter() {
     final now = DateTime.now();
-    
+
     switch (_selectedFilter) {
       case 'today':
         _filteredSessions = _allSessions.where((session) {
@@ -4464,7 +4554,8 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
       case 'week':
         final weekStart = now.subtract(Duration(days: now.weekday - 1));
         _filteredSessions = _allSessions.where((session) {
-          return session.startTime.isAfter(weekStart.subtract(const Duration(days: 1)));
+          return session.startTime
+              .isAfter(weekStart.subtract(const Duration(days: 1)));
         }).toList();
         break;
       case 'month':
@@ -4476,7 +4567,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
       default:
         _filteredSessions = List.from(_allSessions);
     }
-    
+
     setState(() {});
   }
 
@@ -4495,7 +4586,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
           _buildFilterSection(theme),
           _buildStatsSection(theme),
           Expanded(
-            child: _filteredSessions.isEmpty 
+            child: _filteredSessions.isEmpty
                 ? _buildEmptyState(theme)
                 : _buildSessionsList(theme),
           ),
@@ -4541,7 +4632,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
   /// フィルターチップ
   Widget _buildFilterChip(String value, String label) {
     final isSelected = _selectedFilter == value;
-    
+
     return FilterChip(
       label: Text(label),
       selected: isSelected,
@@ -4558,9 +4649,12 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
   Widget _buildStatsSection(ThemeData theme) {
     if (_filteredSessions.isEmpty) return const SizedBox.shrink();
 
-    final totalEarnings = _filteredSessions.fold(0.0, (sum, s) => sum + s.totalEarnings);
-    final totalServiceLoss = _filteredSessions.fold(0.0, (sum, s) => sum + s.serviceLoss);
-    final totalDuration = _filteredSessions.fold(0, (sum, s) => sum + s.durationInSeconds);
+    final totalEarnings =
+        _filteredSessions.fold(0.0, (sum, s) => sum + s.totalEarnings);
+    final totalServiceLoss =
+        _filteredSessions.fold(0.0, (sum, s) => sum + s.serviceLoss);
+    final totalDuration =
+        _filteredSessions.fold(0, (sum, s) => sum + s.durationInSeconds);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -4605,7 +4699,8 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
   }
 
   /// 統計アイテム
-  Widget _buildStatItem(ThemeData theme, String label, String value, Color color) {
+  Widget _buildStatItem(
+      ThemeData theme, String label, String value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -4685,7 +4780,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
             offset: const Offset(0, 2),
           ),
         ],
-        border: session.isServiceOvertime 
+        border: session.isServiceOvertime
             ? Border.all(color: Colors.red.withOpacity(0.3))
             : null,
       ),
@@ -4704,7 +4799,8 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
               const Spacer(),
               if (session.isServiceOvertime)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.red.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -4720,7 +4816,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
             ],
           ),
           const SizedBox(height: 8),
-          
+
           // 時間情報
           Row(
             children: [
@@ -4738,7 +4834,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // 収入情報
           Row(
             children: [
@@ -4763,7 +4859,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
               ],
             ],
           ),
-          
+
           if (session.serviceLoss > 0) ...[
             const SizedBox(height: 8),
             Container(
@@ -4787,7 +4883,7 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
               ),
             ),
           ],
-          
+
           // メモ
           if (session.note?.isNotEmpty == true) ...[
             const SizedBox(height: 8),
@@ -4805,7 +4901,8 @@ class _WorkHistoryScreenState extends State<WorkHistoryScreen> {
   }
 
   /// セッション統計アイテム
-  Widget _buildSessionStat(ThemeData theme, String label, String value, Color color) {
+  Widget _buildSessionStat(
+      ThemeData theme, String label, String value, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
