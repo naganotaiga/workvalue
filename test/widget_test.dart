@@ -1,30 +1,50 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+/// WorkValue - ウィジェットテスト
+/// アプリのウィジェットと機能をテストする
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:workvalue/main.dart';
+import 'package:workvalue/providers/worker_provider.dart';
+import 'package:workvalue/providers/settings_provider.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('WorkValue app smoke test', (WidgetTester tester) async {
+    // WorkValueAppをビルド
+    await tester.pumpWidget(const WorkValueApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // アプリが正常に起動することを確認
+    expect(find.byType(MaterialApp), findsOneWidget);
+    
+    // 基本的なUIコンポーネントが存在することを確認
+    await tester.pumpAndSettle();
+    
+    // テストが完了
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('Provider initialization test', (WidgetTester tester) async {
+    // プロバイダーが正しく初期化されることをテスト
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => SettingsProvider()),
+          ChangeNotifierProvider(create: (context) => WorkerProvider()),
+        ],
+        child: MaterialApp(
+          home: Consumer<WorkerProvider>(
+            builder: (context, provider, child) {
+              return Scaffold(
+                body: Text('Worker Provider: ${provider.isWorking}'),
+              );
+            },
+          ),
+        ),
+      ),
+    );
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // プロバイダーが正常に機能することを確認
+    await tester.pumpAndSettle();
+    expect(find.text('Worker Provider: false'), findsOneWidget);
   });
 }

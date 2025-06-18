@@ -21,6 +21,10 @@ dependencies:
   # 国際化・地域化
   intl: ^0.19.0
   
+  # Flutter国際化サポート
+  flutter_localizations:
+    sdk: flutter
+  
   # iOS専用通知機能
   flutter_local_notifications: ^17.2.4
 
