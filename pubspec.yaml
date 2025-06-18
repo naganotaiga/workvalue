@@ -1,0 +1,51 @@
+name: workvalue
+description: 労働時間を金額で可視化するiOS専用モチベーションアプリ
+
+# アプリのバージョン情報
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: '>=3.16.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 状態管理
+  provider: ^6.1.5
+  
+  # データ永続化
+  shared_preferences: ^2.5.3
+  
+  # 国際化・地域化
+  intl: ^0.19.0
+  
+  # iOS専用通知機能
+  flutter_local_notifications: ^17.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # 静的解析ツール
+  flutter_lints: ^4.0.0
+
+# iOS専用アプリケーション設定
+flutter:
+  uses-material-design: true
+  
+  # アセット設定
+  assets:
+    - assets/fonts/
+
+  # NotoSansJPフォント設定（必須）
+  fonts:
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/NotoSansJP-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansJP-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoSansJP-Bold.ttf
+          weight: 700

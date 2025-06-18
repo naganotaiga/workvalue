@@ -1,0 +1,40 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/generated/**"
+    - "build/**"
+    - "ios/Pods/**"
+    - "ios/Flutter/Generated.xcconfig"
+    - "ios/.symlinks/**"
+
+linter:
+  rules:
+    # iOS専用パフォーマンス最適化
+    avoid_slow_async_io: true
+    close_sinks: true
+    avoid_unnecessary_containers: true
+    sized_box_for_whitespace: true
+    use_build_context_synchronously: false
+    
+    # iOS UI品質向上
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_final_fields: true
+    prefer_final_locals: true
+    
+    # iOS専用セキュリティ
+    secure_pubspec_urls: true
+    
+    # WorkValue開発効率
+    lines_longer_than_80_chars: false
+    prefer_single_quotes: true
+    avoid_print: true
+    use_key_in_widget_constructors: true
+    
+    # iOS専用ベストプラクティス
+    sort_child_properties_last: true
+    avoid_web_libraries_in_flutter: true
+    depend_on_referenced_packages: true

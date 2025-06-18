@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- アプリの基本情報 -->
+    <key>CFBundleDevelopmentRegion</key>
+    <string>ja</string>
+    
+    <key>CFBundleDisplayName</key>
+    <string>WorkValue</string>
+    
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+    
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    
+    <key>CFBundleName</key>
+    <string>WorkValue</string>
+    
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+    
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+    
+    <!-- iOS最小バージョン -->
+    <key>LSMinimumSystemVersion</key>
+    <string>$(IPHONEOS_DEPLOYMENT_TARGET)</string>
+    
+    <!-- 日本語対応 -->
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>ja</string>
+        <string>en</string>
+    </array>
+    
+    <!-- UI設定 -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+    
+    <key>UIMainStoryboardFile</key>
+    <string>Main</string>
+    
+    <!-- iPhone専用（iPadサポートなし） -->
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    
+    <!-- デバイス対応 -->
+    <key>UIDeviceFamily</key>
+    <array>
+        <integer>1</integer>
+    </array>
+    
+    <!-- ステータスバー設定 -->
+    <key>UIStatusBarHidden</key>
+    <false/>
+    
+    <key>UIViewControllerBasedStatusBarAppearance</key>
+    <true/>
+    
+    <!-- セキュリティ設定 -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+    </dict>
+    
+    <!-- WorkValue専用：通知権限設定 -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>background-processing</string>
+    </array>
+    
+    <!-- WorkValue専用：通知権限の説明文 -->
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>WorkValueは勤務成果や休憩リマインダーを通知するために使用します。昼休みの成果通知や勤務終了時の収入表示、サービス残業の警告などをお送りします。</string>
+    
+    <!-- WorkValue専用：プライバシー設定 -->
+    <key>NSUserTrackingUsageDescription</key>
+    <string>WorkValueは労働時間の記録と収入計算のためにデータを使用します。個人の勤務パターン分析と統計表示のみに使用され、外部に送信されることはありません。</string>
+    
+    <!-- Flutter固有の設定 -->
+    <key>io.flutter.embedded_views_preview</key>
+    <true/>
+    
+    <!-- iOS 14以降の高フレームレート対応 -->
+    <key>CADisableMinimumFrameDurationOnPhone</key>
+    <true/>
+    
+    <!-- WorkValue専用：URL Scheme設定 -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>workvalue.app</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>workvalue</string>
+            </array>
+        </dict>
+    </array>
+    
+    <!-- パフォーマンス最適化 -->
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
+    
+    <!-- セキュリティ設定（App Store用） -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    
+    <!-- WorkValue専用：アプリ説明 -->
+    <key>NSHumanReadableCopyright</key>
+    <string>© 2024 WorkValue Team - 労働価値可視化アプリ</string>
+    
+    <!-- WorkValue専用：カテゴリ設定 -->
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
+</dict>
+</plist>
